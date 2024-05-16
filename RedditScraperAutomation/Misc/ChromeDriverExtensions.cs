@@ -1,3 +1,4 @@
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using static System.Console;
@@ -252,6 +253,12 @@ static class ChromeDriverExtensions
         }
     }
 
+    public static void NewTab(this ChromeDriver driver)
+    {
+        // Open a new tab
+        driver.ExecuteScript("window.open();");
+    }
+
 
     public static void Navigate(this ChromeDriver driver, string url)
     {
@@ -317,7 +324,7 @@ static class ChromeDriverExtensions
 
 
 
-    public static ChromeDriver NewChromeDriver()
+    public static ChromeDriver NewChromeDriver(bool headless = false)
     {
 
         //driver options:
@@ -326,6 +333,10 @@ static class ChromeDriverExtensions
         // prevents Selenium console spam
         options.AddExcludedArgument("enable-logging");
         options.LeaveBrowserRunning = false;
+
+        if (headless)
+            options.AddArgument("--headless"); // Add headless argument
+
 
         // downloading flags:
         //chrome_options.AddUserProfilePreference("download.default_directory", downloadDirectory);
