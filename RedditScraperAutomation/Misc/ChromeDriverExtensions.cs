@@ -338,7 +338,7 @@ static class ChromeDriverExtensions
         options.LeaveBrowserRunning = false;
 
         if (headless)
-            options.AddArgument("--headless=new"); // Add headless argument
+            options.AddArgument("--headless=new"); // headless=new (April 2024 update to chrome driver?)
 
         //options.AddArgument("--window-size=1920,1080"); // Set viewport size
         options.AddArguments("--start-maximized");
@@ -379,9 +379,23 @@ static class ChromeDriverExtensions
         options.AddArgument("--prerender");
         options.AddArgument("--disable-touch-events");
         options.AddArgument("--disable-sync");
+        // options.AddArgument("--disable-web-resources");       // i think one of these breaks it!
+        // options.AddArgument("--enable-tcp-fast-open");        // i think one of these breaks it!
+
+        options.AddArgument("--no-first-run");
+        //options.AddArgument("--disable-resource-timing");
+        options.AddArgument("--disable-extensions"); // Disable extensions
+                                                     //   options.AddArgument("--disable-plugins");
+                                                     // options.AddArgument("--single-process");
+
+        // untested & dangerous:
+        options.PageLoadStrategy = PageLoadStrategy.None; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
+        options.AddArgument("--dom-distiller-enabled");
+        options.AddArgument("--enable-scheduler-preemption");
+        //
 
 
-        //fixes headless:
+        //fixes headless mode!
         options.AddArgument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36");
 
 
@@ -402,7 +416,6 @@ static class ChromeDriverExtensions
 
         // ChromeDriver init
         ChromeDriver _initingDriver = new ChromeDriver(options);
-
 
 
         WriteLine("ChromeDriver init.");
