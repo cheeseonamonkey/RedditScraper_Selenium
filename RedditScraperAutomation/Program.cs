@@ -30,7 +30,7 @@ class Program
         Dictionary<string, int> subredditThreadCounts = new Dictionary<string, int>();
         Dictionary<string, int> subredditCommentCounts = new Dictionary<string, int>();
 
-        var driver = ChromeDriverExtensions.NewChromeDriver(headless: false);
+        var driver = ChromeDriverExtensions.NewChromeDriver(headless: true);
 
         try
         {

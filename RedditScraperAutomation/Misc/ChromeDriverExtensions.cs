@@ -327,6 +327,9 @@ static class ChromeDriverExtensions
     public static ChromeDriver NewChromeDriver(bool headless = false)
     {
 
+
+
+
         //driver options:
         var options = new ChromeOptions();
 
@@ -335,7 +338,56 @@ static class ChromeDriverExtensions
         options.LeaveBrowserRunning = false;
 
         if (headless)
-            options.AddArgument("--headless"); // Add headless argument
+            options.AddArgument("--headless=new"); // Add headless argument
+
+        //options.AddArgument("--window-size=1920,1080"); // Set viewport size
+        options.AddArguments("--start-maximized");
+
+
+        string cacheDir = "./.cache";
+
+
+
+
+
+
+        //performance flags:
+        options.AddUserProfilePreference("profile.default_content_setting_values.images", 2);
+        options.AddUserProfilePreference("webkit.webprefs.fonts_disabled", true);
+        options.AddArgument("--disable-gpu");
+        options.AddArgument("--disable-javascript");
+        options.AddArgument("--disable-background-networking");
+        options.AddArgument("--disable-backgrounding-occluded-windows");
+        options.AddArgument("--enable-quic");
+        options.AddArgument("--disable-web-security");
+        options.AddArgument("--blink-settings=imagesEnabled=false");
+        options.AddArgument("--disable-logging");
+        options.AddArgument("--disable-webgl");
+        options.AddArgument("--enable-low-end-device-mode");
+        options.AddArgument("--no-sandbox");
+        options.AddArgument("--disable-dev-shm-usage");
+        if (!System.IO.Directory.Exists(cacheDir))
+            System.IO.Directory.CreateDirectory(cacheDir);
+        options.AddArgument($"--disk-cache-dir={cacheDir}");
+        options.AddArgument("--disable-gpu-sandbox");
+        options.AddArgument("--disable-clipboard");
+        options.AddArgument("--disable-network-throttling");
+        options.AddArgument("--disable-background-timer-throttling");
+        options.AddArgument("--disable-fonts");
+        options.AddArgument("--disable-features=Stylesheets");
+        options.AddArgument("--disable-animations");
+        options.AddArgument("--prerender");
+        options.AddArgument("--disable-touch-events");
+        options.AddArgument("--disable-sync");
+
+
+        //fixes headless:
+        options.AddArgument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36");
+
+
+
+
+
 
 
         // downloading flags:
@@ -352,7 +404,11 @@ static class ChromeDriverExtensions
         ChromeDriver _initingDriver = new ChromeDriver(options);
 
 
+
         WriteLine("ChromeDriver init.");
+
+        _initingDriver.WaitForMs(500);
+
 
         return _initingDriver;
 
