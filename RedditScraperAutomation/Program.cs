@@ -1,4 +1,5 @@
-﻿global using OpenQA.Selenium;
+﻿
+global using OpenQA.Selenium;
 global using OpenQA.Selenium.Chrome;
 global using SeleniumExtras.WaitHelpers;
 global using System;
@@ -38,7 +39,7 @@ class Program
 
         var commentLinks = new List<string>();
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 29; i++)
         {
             frontPagesScraped++;
             commentLinks.AddRange(rAll.GetAllCommentLinks());
@@ -80,63 +81,5 @@ class Program
         }
 
         Console.WriteLine("\nMetadata written to: stats.csv!");
-    }
-}
-
-public class CommentsPage
-{
-    private ChromeDriver _driver;
-
-    public CommentsPage(ChromeDriver driver, string url)
-    {
-        _driver = driver;
-        Url = url;
-
-        driver.Navigate().GoToUrl(url);
-        driver.WaitForAjax();
-    }
-
-    public string Url { get; }
-
-    public List<string> GetAllComments()
-    {
-        List<string> comments = new List<string>();
-
-        var allLinks = _driver.FindElements(By.ClassName("usertext-body")).ToList();
-        allLinks.RemoveRange(0, 2);
-        foreach (var link in allLinks)
-            comments.Add(link.Text);
-
-        return comments;
-    }
-}
-
-public class RAllPage
-{
-    private ChromeDriver _driver;
-
-    public RAllPage(ChromeDriver driver)
-    {
-        _driver = driver;
-    }
-
-    public List<string> GetAllCommentLinks()
-    {
-        List<string> links = new List<string>();
-
-        var allLinks = _driver.FindElements(By.CssSelector("a[href*='/comments/']"));
-
-        foreach (var link in allLinks)
-        {
-            links.Add(link.GetAttribute("href"));
-        }
-
-        return links;
-    }
-
-    public void NextPage()
-    {
-        _driver.FindElement(By.LinkText("next ›")).Click();
-        _driver.WaitForAjax();
     }
 }
