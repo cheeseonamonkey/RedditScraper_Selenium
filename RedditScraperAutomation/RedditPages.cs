@@ -1,4 +1,3 @@
-
 public class CommentsPage
 {
     private ChromeDriver _driver;
@@ -8,35 +7,50 @@ public class CommentsPage
         _driver = driver;
         Url = url;
 
-        driver.Navigate().GoToUrl(url);
-        driver.WaitForAjax();
+        try
+        {
+            driver.Navigate().GoToUrl(url);
+            driver.WaitForAjax();
+        }
+        catch (WebDriverException ex)
+        {
+            Console.WriteLine($"Navigation error: {ex.Message}");
+            // Implement retry logic if necessary
+        }
     }
 
     public string Url { get; }
 
     public List<string> GetAllComments()
     {
+        List<string> comments = new List<string>();
+
         try
         {
-            List<string> comments = new List<string>();
-
             var allLinks = _driver.FindElements(By.ClassName("usertext-body")).ToList();
             allLinks.RemoveRange(0, 2);
             foreach (var link in allLinks)
                 comments.Add(link.Text);
-
-            return comments;
         }
-        catch (Exception err)
+        catch (NoSuchElementException ex)
         {
-            Console.WriteLine("Error! " + err.Message);
-            Console.WriteLine("\t(press eneter to continue scraping...)");
-            Console.ReadLine();
-
-            return new List<string>();
+            Console.WriteLine($"Element not found: {ex.Message}");
         }
+        catch (WebDriverException ex)
+        {
+            Console.WriteLine($"WebDriver error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+
+        return comments;
     }
 }
+
+
+
 
 public class RAllPage
 {
@@ -51,11 +65,26 @@ public class RAllPage
     {
         List<string> links = new List<string>();
 
-        var allLinks = _driver.FindElements(By.CssSelector("a[href*='/comments/']"));
-
-        foreach (var link in allLinks)
+        try
         {
-            links.Add(link.GetAttribute("href"));
+            var allLinks = _driver.FindElements(By.CssSelector("a[href*='/comments/']"));
+
+            foreach (var link in allLinks)
+            {
+                links.Add(link.GetAttribute("href"));
+            }
+        }
+        catch (NoSuchElementException ex)
+        {
+            Console.WriteLine($"Element not found: {ex.Message}");
+        }
+        catch (WebDriverException ex)
+        {
+            Console.WriteLine($"WebDriver error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
         }
 
         return links;
@@ -63,8 +92,22 @@ public class RAllPage
 
     public void NextPage()
     {
-        _driver.FindElement(By.LinkText("next ›")).Click();
-        _driver.WaitForAjax();
+        try
+        {
+            _driver.FindElement(By.LinkText("next ›")).Click();
+            _driver.WaitForAjax();
+        }
+        catch (NoSuchElementException ex)
+        {
+            Console.WriteLine($"Element not found: {ex.Message}");
+        }
+        catch (WebDriverException ex)
+        {
+            Console.WriteLine($"WebDriver error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
     }
 }
-
