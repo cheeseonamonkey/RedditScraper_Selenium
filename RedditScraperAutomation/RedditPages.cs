@@ -15,7 +15,6 @@ public class CommentsPage
         catch (WebDriverException ex)
         {
             Console.WriteLine($"Navigation error: {ex.Message}");
-            // Implement retry logic if necessary
         }
     }
 
@@ -28,20 +27,14 @@ public class CommentsPage
         try
         {
             var allLinks = _driver.FindElements(By.ClassName("usertext-body")).ToList();
-            allLinks.RemoveRange(0, 2);
+            if (allLinks.Count >= 2)
+                allLinks.RemoveRange(0, 2);
             foreach (var link in allLinks)
                 comments.Add(link.Text);
         }
-        catch (NoSuchElementException ex)
-        {
-            Console.WriteLine($"Element not found: {ex.Message}");
-        }
-        catch (WebDriverException ex)
-        {
-            Console.WriteLine($"WebDriver error: {ex.Message}");
-        }
         catch (Exception ex)
         {
+            Thread.Sleep(800);
             Console.WriteLine($"Unexpected error: {ex.Message}");
         }
 
@@ -74,40 +67,55 @@ public class RAllPage
                 links.Add(link.GetAttribute("href"));
             }
         }
-        catch (NoSuchElementException ex)
-        {
-            Console.WriteLine($"Element not found: {ex.Message}");
-        }
-        catch (WebDriverException ex)
-        {
-            Console.WriteLine($"WebDriver error: {ex.Message}");
-        }
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
+            Thread.Sleep(800);
+
         }
 
         return links;
     }
-
     public void NextPage()
     {
         try
         {
-            _driver.FindElement(By.LinkText("next ›")).Click();
+            Thread.Sleep(30);
+            _driver.WaitForMs(80);
+
+            var nextButton = _driver.FindElement(By.CssSelector(".next-button a"));
+
+            if (nextButton != null)
+                nextButton.Click();
+
+            else  // delay then retry
+            {
+
+                _driver.Navigate(_driver.Url); //refresh
+                _driver.WaitForMs(100);
+
+                _driver.WaitForElementCSS(".next-button a");
+
+                nextButton = _driver.FindElement(By.LinkText("next ›"));
+
+                nextButton?.Click();
+                _driver.WaitForAjax();
+
+            }
+
+
+
+
             _driver.WaitForAjax();
-        }
-        catch (NoSuchElementException ex)
-        {
-            Console.WriteLine($"Element not found: {ex.Message}");
-        }
-        catch (WebDriverException ex)
-        {
-            Console.WriteLine($"WebDriver error: {ex.Message}");
+
+
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
+            // Handle other exceptions
+            _driver.WaitForMs(650);
+            Console.WriteLine($"Error occurred finding Next button (delaying before continuing): {ex.Message}");
         }
     }
+
 }

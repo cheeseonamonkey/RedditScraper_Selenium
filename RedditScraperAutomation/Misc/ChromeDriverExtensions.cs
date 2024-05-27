@@ -10,7 +10,7 @@ static class ChromeDriverExtensions
 {
 
 
-    public static int DEFAULT_TIMEOUT = 10_000;
+    public static int DEFAULT_TIMEOUT = 8_000;
 
 
 
@@ -196,7 +196,6 @@ static class ChromeDriverExtensions
     {
         try
         {
-
             new WebDriverWait(driver, TimeSpan.FromMilliseconds(ms));
         }
         catch (Exception exc)
@@ -355,7 +354,7 @@ static class ChromeDriverExtensions
         options.AddUserProfilePreference("profile.default_content_setting_values.images", 2);
         options.AddUserProfilePreference("webkit.webprefs.fonts_disabled", true);
         options.AddArgument("--disable-gpu");
-        options.AddArgument("--disable-javascript");
+        //options.AddArgument("--disable-javascript"); Reddit needs JQuery, so this isn't a good option (causes errors)
         options.AddArgument("--disable-background-networking");
         options.AddArgument("--disable-backgrounding-occluded-windows");
         options.AddArgument("--enable-quic");
@@ -366,9 +365,10 @@ static class ChromeDriverExtensions
         options.AddArgument("--enable-low-end-device-mode");
         options.AddArgument("--no-sandbox");
         options.AddArgument("--disable-dev-shm-usage");
-        if (!System.IO.Directory.Exists(cacheDir))
-            System.IO.Directory.CreateDirectory(cacheDir);
-        options.AddArgument($"--disk-cache-dir={cacheDir}");
+        //System.IO.Directory.Delete(cacheDir, true);
+        //if (!System.IO.Directory.Exists(cacheDir))
+        //    System.IO.Directory.CreateDirectory(cacheDir);
+        //options.AddArgument($"--disk-cache-dir={cacheDir}");
         options.AddArgument("--disable-gpu-sandbox");
         options.AddArgument("--disable-clipboard");
         options.AddArgument("--disable-network-throttling");
@@ -386,10 +386,10 @@ static class ChromeDriverExtensions
         //options.AddArgument("--disable-resource-timing");
         options.AddArgument("--disable-extensions"); // Disable extensions
                                                      //   options.AddArgument("--disable-plugins");
-                                                     // options.AddArgument("--single-process");
+                                                     // options.AddArgument("--single-process");                                                                                  
 
         // untested & dangerous:
-        options.PageLoadStrategy = PageLoadStrategy.None; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
+        options.PageLoadStrategy = PageLoadStrategy.Eager; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
         options.AddArgument("--dom-distiller-enabled");
         options.AddArgument("--enable-scheduler-preemption");
         //
