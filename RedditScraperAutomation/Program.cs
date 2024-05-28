@@ -41,7 +41,7 @@ class Program
 
             var commentLinks = new List<string>();
 
-            for (int i = 0; i < 48; i++)
+            for (int i = 0; i < 44; i++)
             {
                 frontPagesScraped++;
                 commentLinks.AddRange(rAll.GetAllCommentLinks());
@@ -51,39 +51,46 @@ class Program
 
             for (int i = 0; i < commentLinks.Count; i++)
             {
-                string commentLink = commentLinks[i];
-                File.AppendAllText(threadUrlsPath, commentLink + "\n");
-
-                var commentPage = new CommentsPage(driver, commentLink);
-                var threadComments = commentPage.GetAllComments();
-
-                if (threadComments.Count == 0)
+                try
                 {
-                    Console.WriteLine($"No comments found for thread: {commentLink}");
-                    continue; // Move to the next thread
+                    string commentLink = commentLinks[i];
+                    File.AppendAllText(threadUrlsPath, commentLink + "\n");
+
+                    var commentPage = new CommentsPage(driver, commentLink);
+                    var threadComments = commentPage.GetAllComments();
+
+                    if (threadComments.Count == 0)
+                    {
+                        Console.WriteLine($"No comments found for thread: {commentLink}");
+                        continue; // Move to the next thread
+                    }
+
+                    threadPagesScraped++;
+
+                    var subreddit = Regex.Match(commentLink, @"old.reddit.com/r/.*comments").Groups[1].Value;
+                    if (subredditThreadCounts.ContainsKey(subreddit))
+                        subredditThreadCounts[subreddit]++;
+                    else
+                        subredditThreadCounts[subreddit] = 1;
+
+                    if (subredditCommentCounts.ContainsKey(subreddit))
+                        subredditCommentCounts[subreddit] += threadComments.Count;
+                    else
+                        subredditCommentCounts[subreddit] = threadComments.Count;
+
+                    var allCommentsConcat = string.Join("\n", threadComments);
+
+                    File.AppendAllText(allCommentsPath, allCommentsConcat + "\n\n");
+
+                    string filePath = Path.Combine(commentsDirectory, $"{subreddit}_Comments.txt");
+                    File.AppendAllText(filePath, allCommentsConcat + "\n\n");
+
+                    Console.WriteLine($"Scraped {threadPagesScraped} of {commentLinks.Count} threads ({threadComments.Count} comments) ({(new FileInfo(allCommentsPath).Length / 1048576.0).ToString("0.00")} MB)");
                 }
-
-                threadPagesScraped++;
-
-                var subreddit = Regex.Match(commentLink, @"old.reddit.com/r/.*comments").Groups[1].Value;
-                if (subredditThreadCounts.ContainsKey(subreddit))
-                    subredditThreadCounts[subreddit]++;
-                else
-                    subredditThreadCounts[subreddit] = 1;
-
-                if (subredditCommentCounts.ContainsKey(subreddit))
-                    subredditCommentCounts[subreddit] += threadComments.Count;
-                else
-                    subredditCommentCounts[subreddit] = threadComments.Count;
-
-                var allCommentsConcat = string.Join("\n", threadComments);
-
-                File.AppendAllText(allCommentsPath, allCommentsConcat + "\n\n");
-
-                string filePath = Path.Combine(commentsDirectory, $"{subreddit}_Comments.txt");
-                File.AppendAllText(filePath, allCommentsConcat + "\n\n");
-
-                Console.WriteLine($"Scraped {threadPagesScraped} of {commentLinks.Count} threads ({threadComments.Count} comments) ({(new FileInfo(allCommentsPath).Length / 1048576.0).ToString("0.00")} MB)");
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in loop: {ex.Message}");
+                }
             }
 
 
