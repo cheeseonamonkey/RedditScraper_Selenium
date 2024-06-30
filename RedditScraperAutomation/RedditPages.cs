@@ -80,8 +80,8 @@ public class RAllPage
     {
         try
         {
-            Thread.Sleep(30);
-            _driver.WaitForMs(80);
+            Thread.Sleep(20);
+            _driver.WaitForMs(50);
 
             var nextButton = _driver.FindElement(By.CssSelector(".next-button a"));
 
