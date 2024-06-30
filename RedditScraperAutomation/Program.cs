@@ -59,6 +59,8 @@ class Program
             {
                 try
                 {
+
+
                     string commentLink = commentLinks[i];
                     File.AppendAllText(threadUrlsPath, commentLink + "\n");
 
@@ -68,6 +70,8 @@ class Program
                     if (threadComments.Count == 0)
                     {
                         Console.WriteLine($"No comments found for thread: {commentLink}");
+                        driver.WaitForMs(400);
+
                         continue; // Move to the next thread
                     }
 
@@ -94,10 +98,12 @@ class Program
                     File.AppendAllText(filePath, allCommentsConcat + "\n\n");
 
                     Console.WriteLine($"Scraped {threadPagesScraped} of {commentLinks.Count} threads ({threadComments.Count} comments) ({(new FileInfo(allCommentsPath).Length / 1048576.0).ToString("0.00")} MB)");
+                    driver.WaitForMs(20);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error in loop: {ex.Message}");
+                    driver.WaitForMs(800);
                 }
             }
 

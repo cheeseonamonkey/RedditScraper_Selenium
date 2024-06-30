@@ -369,6 +369,8 @@ static class ChromeDriverExtensions
         //    System.IO.Directory.CreateDirectory(cacheDir);
         //options.AddArgument($"--disk-cache-dir={cacheDir}");
         options.AddArgument("--disable-gpu-sandbox");
+        options.AddArgument("--disable-gpu");
+        options.AddArgument("--disable-sandbox");
         options.AddArgument("--disable-clipboard");
         options.AddArgument("--disable-network-throttling");
         options.AddArgument("--disable-background-timer-throttling");
@@ -388,8 +390,8 @@ static class ChromeDriverExtensions
                                                      // options.AddArgument("--single-process");                                                                                  
 
         // untested & dangerous:
-        options.PageLoadStrategy = PageLoadStrategy.Eager; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
-        options.AddArgument("--dom-distiller-enabled");
+        options.PageLoadStrategy = PageLoadStrategy.Normal; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
+        //options.AddArgument("--dom-distiller-enabled");
         options.AddArgument("--enable-scheduler-preemption");
         //
 
