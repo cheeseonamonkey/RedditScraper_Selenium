@@ -191,16 +191,15 @@ static class ChromeDriverExtensions
             throw exc;
         }
     }
-
     public static void WaitForMs(this ChromeDriver driver, int ms)
     {
         try
         {
-            new WebDriverWait(driver, TimeSpan.FromMilliseconds(ms));
+            Thread.Sleep(ms);
         }
         catch (Exception exc)
         {
-            throw exc;
+            throw new Exception("An error occurred while waiting.", exc);
         }
     }
 

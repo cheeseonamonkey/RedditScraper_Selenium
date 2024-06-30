@@ -6,6 +6,13 @@ global using System;
 global using System.Collections.Generic;
 global using System.IO;
 global using System.Text.RegularExpressions;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using SeleniumExtras.WaitHelpers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 
 class Program
 {
@@ -18,7 +25,6 @@ class Program
         if (Directory.Exists(outputDirectory))
             Directory.Delete(outputDirectory, true);
         Directory.CreateDirectory(outputDirectory);
-
 
         string threadUrlsPath = Path.Combine(outputDirectory, "ThreadUrls.csv");
         string allCommentsPath = Path.Combine(outputDirectory, "AllCommentsConcat.txt");
@@ -35,13 +41,13 @@ class Program
 
         try
         {
-            driver.Navigate("https://old.reddit.com/r/all");
+            driver.Navigate().GoToUrl("https://old.reddit.com/r/all");
 
             var rAll = new RAllPage(driver);
 
             var commentLinks = new List<string>();
 
-            for (int i = 0; i < 44; i++)
+            for (int i = 0; i < 48; i++)
             {
                 frontPagesScraped++;
                 commentLinks.AddRange(rAll.GetAllCommentLinks());
@@ -67,7 +73,9 @@ class Program
 
                     threadPagesScraped++;
 
-                    var subreddit = Regex.Match(commentLink, @"old.reddit.com/r/.*comments").Groups[1].Value;
+                    var subredditMatch = Regex.Match(commentLink, @"old\.reddit\.com/r/([^/]+)/comments");
+                    string subreddit = subredditMatch.Success ? subredditMatch.Groups[1].Value : "Unknown";
+
                     if (subredditThreadCounts.ContainsKey(subreddit))
                         subredditThreadCounts[subreddit]++;
                     else
@@ -92,7 +100,6 @@ class Program
                     Console.WriteLine($"Error in loop: {ex.Message}");
                 }
             }
-
 
             using (StreamWriter writer = new StreamWriter(statsPath))
             {

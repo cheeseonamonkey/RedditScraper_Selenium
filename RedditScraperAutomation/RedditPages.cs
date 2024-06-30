@@ -70,7 +70,7 @@ public class RAllPage
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
-            Thread.Sleep(800);
+            _driver.WaitForMs(650);
 
         }
 
@@ -80,8 +80,8 @@ public class RAllPage
     {
         try
         {
-            Thread.Sleep(30);
-            _driver.WaitForMs(80);
+            _driver.WaitForMs(65);
+
 
             var nextButton = _driver.FindElement(By.CssSelector(".next-button a"));
 
@@ -92,7 +92,7 @@ public class RAllPage
             {
 
                 _driver.Navigate(_driver.Url); //refresh
-                _driver.WaitForMs(100);
+                _driver.WaitForMs(250);
 
                 _driver.WaitForElementCSS(".next-button a");
 
