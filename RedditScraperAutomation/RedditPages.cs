@@ -4,17 +4,28 @@ public class CommentsPage
 
     public CommentsPage(ChromeDriver driver, string url)
     {
+
+
         _driver = driver;
         Url = url;
+
+
+
 
         try
         {
             driver.Navigate().GoToUrl(url);
+            driver.WaitForMs(50);
             driver.WaitForAjax();
         }
         catch (WebDriverException ex)
         {
-            Console.WriteLine($"Navigation error: {ex.Message}");
+            Console.WriteLine($"Navigation error: {ex.Message} (pausing 20s for rate limit...)");
+            driver.WaitForMs(22_000);
+            Console.WriteLine($"And also now restarting the driver instance...");
+            driver.Close();
+            driver = ChromeDriverExtensions.NewChromeDriver(headless: false);
+            driver.WaitForMs(400);
         }
     }
 

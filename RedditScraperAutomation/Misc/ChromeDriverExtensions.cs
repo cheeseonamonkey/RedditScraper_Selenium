@@ -14,10 +14,23 @@ static class ChromeDriverExtensions
 
 
 
+    public static Int64 AjaxCount(this ChromeDriver driver)
+    {
+        var a = (Int64)(driver as IJavaScriptExecutor).ExecuteScript("return jQuery.active;");
+        if (a == null)
+            throw new NullReferenceException("Error: null reference when reading ajax count from driver!");
+        return a;
+    }
+
+
+
+
     // another life-saver
     // (optionally, returns whether there were any pending requests)
     public static bool WaitForAjax(this ChromeDriver cd)
     {
+
+
         bool oneMoreTryThenBreak = false;
 
         if (!cd.IsAnyRequestPending())
@@ -124,13 +137,6 @@ static class ChromeDriverExtensions
 
     //public static bool WaitForAjax(this ChromeDriver cd)
 
-    public static Int64 AjaxCount(this ChromeDriver driver)
-    {
-        var a = (Int64)(driver as IJavaScriptExecutor).ExecuteScript("return jQuery.active;");
-        if (a == null)
-            throw new NullReferenceException("Error: null reference when reading ajax count from driver!");
-        return a;
-    }
 
 
     public static void WaitUntilVisibleAndClickable(this By elby, ChromeDriver cdriver)
@@ -352,32 +358,35 @@ static class ChromeDriverExtensions
         //performance flags:
         options.AddUserProfilePreference("profile.default_content_setting_values.images", 2);
         options.AddUserProfilePreference("webkit.webprefs.fonts_disabled", true);
-        options.AddArgument("--disable-gpu");
-        //options.AddArgument("--disable-javascript"); Reddit needs JQuery, so this isn't a good option (causes errors)
-        options.AddArgument("--disable-background-networking");
-        options.AddArgument("--disable-backgrounding-occluded-windows");
-        options.AddArgument("--enable-quic");
+        //options.AddArgument("--disable-gpu");
+        options.AddArgument("--disable-javascript"); //Reddit needs JQuery, so this isn't a good option (causes errors)
+        //   options.AddArgument("--disable-background-networking");
+        //  options.AddArgument("--disable-backgrounding-occluded-windows");
+        //  options.AddArgument("--enable-quic");
         options.AddArgument("--disable-web-security");
         options.AddArgument("--blink-settings=imagesEnabled=false");
         options.AddArgument("--disable-logging");
-        options.AddArgument("--disable-webgl");
-        options.AddArgument("--enable-low-end-device-mode");
+        // options.AddArgument("--disable-webgl");
+        //options.AddArgument("--enable-low-end-device-mode");
         options.AddArgument("--no-sandbox");
         options.AddArgument("--disable-dev-shm-usage");
-        //System.IO.Directory.Delete(cacheDir, true);
-        //if (!System.IO.Directory.Exists(cacheDir))
-        //    System.IO.Directory.CreateDirectory(cacheDir);
-        //options.AddArgument($"--disk-cache-dir={cacheDir}");
-        options.AddArgument("--disable-gpu-sandbox");
-        options.AddArgument("--disable-gpu");
-        options.AddArgument("--disable-sandbox");
+
+        //caching:
+        System.IO.Directory.Delete(cacheDir, true);
+        if (!System.IO.Directory.Exists(cacheDir))
+            System.IO.Directory.CreateDirectory(cacheDir);
+        options.AddArgument($"--disk-cache-dir={cacheDir}");
+
+
+        //options.AddArgument("--disable-gpu-sandbox");
+        // options.AddArgument("--disable-sandbox");
         options.AddArgument("--disable-clipboard");
-        options.AddArgument("--disable-network-throttling");
+        //options.AddArgument("--disable-network-throttling");
         options.AddArgument("--disable-background-timer-throttling");
         options.AddArgument("--disable-fonts");
-        options.AddArgument("--disable-features=Stylesheets");
-        options.AddArgument("--disable-animations");
-        options.AddArgument("--prerender");
+        //   options.AddArgument("--disable-features=Stylesheets");
+        //  options.AddArgument("--disable-animations");
+        //      options.AddArgument("--prerender");
         options.AddArgument("--disable-touch-events");
         options.AddArgument("--disable-sync");
         // options.AddArgument("--disable-web-resources");       // i think one of these breaks it!
@@ -390,9 +399,9 @@ static class ChromeDriverExtensions
                                                      // options.AddArgument("--single-process");                                                                                  
 
         // untested & dangerous:
-        options.PageLoadStrategy = PageLoadStrategy.Normal; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
+        //options.PageLoadStrategy = PageLoadStrategy.Normal; // or PageLoadStrategy.Normal, PageLoadStrategy.Eager
         //options.AddArgument("--dom-distiller-enabled");
-        options.AddArgument("--enable-scheduler-preemption");
+        //options.AddArgument("--enable-scheduler-preemption");
         //
 
 
