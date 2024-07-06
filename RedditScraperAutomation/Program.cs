@@ -49,7 +49,9 @@ class Program
 
             for (int i = 0; i < 48; i++)
             {
-                driver.WaitForMs(1800);
+                int totalWaitMs = 1500 + new Random().Next(700, 2200);
+                driver.WaitForMs(totalWaitMs);
+
 
                 frontPagesScraped++;
                 commentLinks.AddRange(rAll.GetAllCommentLinks());
@@ -62,7 +64,7 @@ class Program
                 try
                 {
 
-                    driver.WaitForMs(3000);
+                    int totalWaitMs = 2500 + new Random().Next(900, 3900);
 
                     string commentLink = commentLinks[i];
                     File.AppendAllText(threadUrlsPath, commentLink + "\n");

@@ -20,12 +20,14 @@ public class CommentsPage
         }
         catch (WebDriverException ex)
         {
-            Console.WriteLine($"Navigation error: {ex.Message} (pausing 20s for rate limit...)");
-            driver.WaitForMs(22_000);
-            Console.WriteLine($"And also now restarting the driver instance...");
-            driver.Close();
-            driver = ChromeDriverExtensions.NewChromeDriver(headless: false);
-            driver.WaitForMs(400);
+            Console.WriteLine($"Navigation error: {ex.Message} (pausing 30s for rate limit...)");
+            driver.WaitForMs(30_000);
+
+            //doesn't work (error: invalid session ID) but could fix a lot of problems
+            //Console.WriteLine($"And also now restarting the driver instance...?");
+            //driver.Close();
+            //driver = ChromeDriverExtensions.NewChromeDriver(headless: false);
+            driver.WaitForMs(2500);
         }
     }
 
