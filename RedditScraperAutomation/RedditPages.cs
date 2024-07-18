@@ -83,7 +83,7 @@ public class RAllPage
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
-            _driver.WaitForMs(650);
+            _driver.WaitForMs(450);
 
         }
 

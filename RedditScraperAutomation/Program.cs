@@ -37,7 +37,7 @@ class Program
         Dictionary<string, int> subredditThreadCounts = new Dictionary<string, int>();
         Dictionary<string, int> subredditCommentCounts = new Dictionary<string, int>();
 
-        var driver = ChromeDriverExtensions.NewChromeDriver(headless: false);
+        var driver = ChromeDriverExtensions.NewChromeDriver(headless: true);
 
         try
         {
@@ -49,7 +49,7 @@ class Program
 
             for (int i = 0; i < 48; i++)
             {
-                int totalWaitMs = 1500 + new Random().Next(700, 2200);
+                int totalWaitMs = 2100 + new Random().Next(900, 2500);
                 driver.WaitForMs(totalWaitMs);
 
 
@@ -58,13 +58,14 @@ class Program
                 Console.WriteLine($"Perusing /r/All... ({i} of 48) (thread URLs: {commentLinks.Count})");
                 rAll.NextPage();
             }
-
+            driver.WaitForMs(9200);
             for (int i = 0; i < commentLinks.Count; i++)
             {
                 try
                 {
 
-                    int totalWaitMs = 2500 + new Random().Next(900, 3900);
+                    int totalWaitMs = 4200 + new Random().Next(2100, 9700);
+                    driver.WaitForMs(totalWaitMs);
 
                     string commentLink = commentLinks[i];
                     File.AppendAllText(threadUrlsPath, commentLink + "\n");
@@ -75,7 +76,10 @@ class Program
                     if (threadComments.Count == 0)
                     {
                         Console.WriteLine($"No comments found for thread: {commentLink}");
-                        driver.WaitForMs(3000);
+                        driver.WaitForMs(5000);
+
+                        Console.WriteLine("\t (press enter to continue...)");
+                        Console.ReadLine();
 
                         continue; // Move to the next thread
                     }
